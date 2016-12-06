@@ -9,8 +9,13 @@ app = Flask(__name__)
 @app.route('/', methods=['GET', 'POST'])
 def unban():
     if request.method == 'GET':
-        ip = request.remote_addr
+        if 'X-Forwarded-For' in request.headers:
+            ip = request.headers['X-Forwarded-For']
+        else:
+            ip = request.remote_addr
+
         banned_in_jails = find_banned_ip(ip)
+
         if banned_in_jails:
             return render_template('unban.html', ip=ip, jails=','.join(banned_in_jails))
         else:
