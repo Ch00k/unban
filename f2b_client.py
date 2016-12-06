@@ -6,7 +6,7 @@ IP_LIST_RE = re.compile(r'^\s+.*Banned\s+IP\s+list:\s+(.*)$')
 
 
 def get_banned_ips(jail):
-    out = run_f2b_client(['/usr/bin/fail2ban-client', 'status', jail])
+    out = run_f2b_client(['fail2ban-client', 'status', jail])
 
     for line in out.decode().split('\n'):
         if 'Banned IP list' in line:
@@ -22,7 +22,7 @@ def get_banned_ips(jail):
 
 def unban_ip(jails, ip):
     for jail in jails:
-        run_f2b_client(['/usr/bin/fail2ban-client', 'set', jail, 'unbanip', ip])
+        run_f2b_client(['fail2ban-client', 'set', jail, 'unbanip', ip])
 
 
 def find_banned_ip(ip):
