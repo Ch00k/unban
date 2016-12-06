@@ -10,14 +10,13 @@ app = Flask(__name__)
 def unban():
     if request.method == 'GET':
         ip = request.remote_addr
-        ip = '149.154.157.239'
         banned_in_jails = find_banned_ip(ip)
         if banned_in_jails:
-            return render_template('unban.html', ip=ip, jails=banned_in_jails)
+            return render_template('unban.html', ip=ip, jails=','.join(banned_in_jails))
         else:
-            return "{0} is not banned".format(ip), 200
+            return "{0} not banned".format(ip), 200
     elif request.method == 'POST':
-        unban_ip(request.form['jails'], request.form['ip'])
+        unban_ip(request.form['jails'].split(','), request.form['ip'])
         return redirect('/')
 
 
