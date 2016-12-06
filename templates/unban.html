@@ -1,0 +1,6 @@
+{{ ip }} banned
+<form action="{{ url_for('get_client_ip') }}" method=post>
+    <input type=hidden name=ip value="{{ ip }}">
+    <input type=hidden name=jails value="{{ jails }}">
+    <input type=submit value=unban>
+</form>
