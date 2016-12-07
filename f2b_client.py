@@ -1,8 +1,22 @@
 import re
 import subprocess
 
-JAILS = ('dovecot-iptables', 'dovecot-iptables-rc')
+JAILS_LIST_RE = re.compile(r'^.*Jail list:\s+(.*)$')
 IP_LIST_RE = re.compile(r'^\s+.*Banned\s+IP\s+list:\s+(.*)$')
+
+
+def get_jails():
+    out = run_f2b_client(['fail2ban-client', 'status'])
+    for line in out.decode().split('\n'):
+        if 'Jail list' in line:
+            match = JAILS_LIST_RE.match(line)
+            if not match:
+                raise RuntimeError("Could not find jails list")
+
+            jails = match.group(1)
+            return jails.split(', ')
+    else:
+        raise RuntimeError("Could not find jails list")
 
 
 def get_banned_ips(jail):
@@ -28,7 +42,7 @@ def unban_ip(jails, ip):
 def find_banned_ip(ip):
     banning_jails = []
 
-    for jail in JAILS:
+    for jail in get_jails():
         if ip in get_banned_ips(jail):
             banning_jails.append(jail)
     return banning_jails
